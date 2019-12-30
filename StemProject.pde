@@ -92,8 +92,8 @@ void draw()
     //DrawFilterFirst(pix, msk, _width, _height);
     //DrawFilterLast(pix, msk, _width, _height);
     //DrawInterlace(pix, _width, _height); //<>//
-    //DrawHalfFilterLast(halfpix, msk, _width, _height);
     //DrawHalfFilterFirst(halfpix, msk, _width, _height);
+    //DrawHalfFilterLast(halfpix, msk, _width, _height);
     
     //int endTick = millis();
     //delta = endTick - startTick;
