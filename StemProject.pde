@@ -15,9 +15,9 @@ PImage img = null;
 
 void setup()
 {   
-    String[] urls = loadStrings("tests.txt"); // Gets list of image tests to perform
-    String url = urls[0]; // Gets link to test image
-    String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
+    //String[] urls = loadStrings("tests.txt"); // Gets list of image tests to perform
+    //String url = urls[0]; // Gets link to test image
+    //String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
     //img = loadImage(url, type);
     
     if (img != null)
@@ -85,15 +85,15 @@ void draw()
     
     background(0);
     
-    pix = MakeRandom(_width, _height);
-    halfpix = MakeHalfPixels(pix, msk, _width, _height);
+    pix = MakeShift(pix);
+    //halfpix = MakeHalfPixels(pix, msk, _width, _height);
     
-    //DrawRaw(pix, _width, _height);
+    DrawRaw(pix, _width, _height);
     //DrawFilterFirst(pix, msk, _width, _height);
     //DrawFilterLast(pix, msk, _width, _height);
     //DrawInterlace(pix, _width, _height); //<>//
     //DrawHalfFilterLast(halfpix, msk, _width, _height);
-    DrawHalfFilterFirst(halfpix, msk, _width, _height);
+    //DrawHalfFilterFirst(halfpix, msk, _width, _height);
     
     //int endTick = millis();
     //delta = endTick - startTick;
