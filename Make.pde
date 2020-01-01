@@ -1,64 +1,82 @@
-color[] MakeRandom(int w, int h)
+color[][] MakeRandom(int w, int h)
 {
-    final int _l = w * h; // Length of the new array
-    int[] p = new int[_l]; // Temp array for random pixels
-    for (int i = 0; i < _l; i++)
+    int[][] p = new int[w][h]; // Temp array for random pixels
+    for (int i = 0; i < w; i++)
     {
-        int valr = int(random(255));
-        int valg = int(random(255));
-        int valb = int(random(255));
-        p[i] = color(valr, valg, valb);
+        for (int j = 0; j < h; j++)
+        {
+            int valr = int(random(255));
+            int valg = int(random(255));
+            int valb = int(random(255));
+            p[i][j] = color(valr, valg, valb);
+        }
     }
     return p;
 }
 
-color[] MakeShift(color[] p)
+color[][] MakeShift(color[][] p, int shift) // https://stackoverflow.com/a/34277492
 {
-    color[] temp = p;
-    color _last = temp[temp.length - 1]; // Get the final value in array
-    for (int j = temp.length - 1; j >= 1; j--) // Go through array backwards
-    {
-        temp[j] = temp[j - 1]; // Move each value one to the right
+    color[][] temp = p;
+    for (int row = 0; row < temp.length; row++) {
+        int rowLength = temp[row].length;
+
+        // keep shift within bounds of the array
+        shift = shift % rowLength;
+
+        // copy out elements that will "fall off"
+        color[] tmp = new color[shift];
+        for (int i = 0; i < shift; i++) {
+            tmp[i] = temp[row][i];
+        }
+
+        // shift like normal
+        for (int col = 0; col < rowLength - shift; col++) {
+            temp[row][col] = temp[row][col + shift];
+        }
+
+        // copy back the "fallen off" elements
+        for (int i = 0; i < shift; i++) {
+            temp[row][i + (rowLength - shift)] = tmp[i];
+        }
     }
-    temp[0] = _last; // Add the last value to the front
     return temp;
 }
 
-int[] MakeNotMask(int w, int h)
+int[][] MakeNotMask(int w, int h)
 {
-    final int _l = w * h;
-    int[] p = new int[_l];
-    for (int i = 0; i < h; i++) // y, height, row, etc. 
+    int[][] p = new int[w][h];
+    for (int i = 0; i < w; i++) // y, height, row, etc. 
     {
-        for (int j = 0; j < w; j++) // x, width, column, etc.
+        for (int j = 0; j < h; j++) // x, width, column, etc.
         {
             if (isOdd(i)) // Odd row
             {
                 int val = j % 2; // 0, 1, 0, 1, ...
-                int _index = Convert2dTo1d(j, i, w);
-                p[_index] = val;
+                p[i][j] = val;
             }
             else if (isEven(i)) // Even row
             {
                 int val = -(j % 2) + 1; // 1, 0, 1, 0, ...
-                int _index = Convert2dTo1d(j, i, w);
-                p[_index] = val;
+                p[i][j] = val;
             }
         }
     }
     return p;
 }
 
-color[] MakeHalfPixels(color[] p, int[] m, int w, int h)
+color[][] MakeHalfPixels(color[][] p, int[][] m, int w, int h)
 {
-    final int _l = (w * h) / 2;
-    color[] hp = new color[_l];
-    for (int i = 0; i < m.length; i++) // Go through mask
+    color[][] hp = new color[w / 2][h / 2];
+    for (int i = 0; i < w; i++) // Go through mask
     {
-        if (m[i] == 1) // If can see through mask
+        for (int j = 0; j < h; j++)
         {
-            int _index = i / 2; // Transform mask index to pixel index
-            hp[_index] = p[i];
+            if (m[i][j] == 1) // If can see through mask
+            {
+                int i_index = i / 2; // Transform mask index to pixel index
+                int j_index = j / 2; // Transform mask index to pixel index
+                hp[i_index][j_index] = p[i][j];
+            }
         }
     }
     return hp;
