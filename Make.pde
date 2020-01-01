@@ -1,19 +1,21 @@
-int[] MakeRandom(int w, int h)
+color[] MakeRandom(int w, int h)
 {
     final int _l = w * h; // Length of the new array
     int[] p = new int[_l]; // Temp array for random pixels
     for (int i = 0; i < _l; i++)
     {
-        int val = int(random(255 / cmax));
-        p[i] = val;
+        int valr = int(random(255));
+        int valg = int(random(255));
+        int valb = int(random(255));
+        p[i] = color(valr, valg, valb);
     }
     return p;
 }
 
-int[] MakeShift(int[] p)
+color[] MakeShift(color[] p)
 {
-    int[] temp = p;
-    int _last = temp[temp.length - 1]; // Get the final value in array
+    color[] temp = p;
+    color _last = temp[temp.length - 1]; // Get the final value in array
     for (int j = temp.length - 1; j >= 1; j--) // Go through array backwards
     {
         temp[j] = temp[j - 1]; // Move each value one to the right
@@ -47,10 +49,10 @@ int[] MakeNotMask(int w, int h)
     return p;
 }
 
-int[] MakeHalfPixels(int[] p, int[] m, int w, int h)
+color[] MakeHalfPixels(color[] p, int[] m, int w, int h)
 {
     final int _l = (w * h) / 2;
-    int[] hp = new int[_l];
+    color[] hp = new color[_l];
     for (int i = 0; i < m.length; i++) // Go through mask
     {
         if (m[i] == 1) // If can see through mask
