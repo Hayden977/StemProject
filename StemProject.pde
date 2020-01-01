@@ -8,23 +8,28 @@ int _len; // Array length
 
 PImage img = null;
 
-final boolean usingHalf = true;
+final boolean usingHalf = false;
 final boolean grayscale = false;
 final boolean testing = false;
 final boolean debug = true;
 
 final boolean hq = true;
-final int psize = 1; // Pixel Size
+final int psize = 2; // Pixel Size
 
 int delta;
 int deltaTick, startTick, endTick;
 
+int rectX = 30,
+    rectY = 20,
+    rectW = 20,
+    rectH = 20;
+
 void setup()
 {   
-    String[] urls = loadStrings("tests.txt"); // Gets list of image tests to perform
-    String url = urls[0]; // Gets link to test image
-    String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
-    img = loadImage(url, type);
+    //String[] urls = loadStrings("tests.txt"); // Gets list of image tests to perform
+    //String url = urls[0]; // Gets link to test image
+    //String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
+    //img = loadImage(url, type);
     
     if (img != null)
     {
@@ -33,8 +38,8 @@ void setup()
     }
     else
     {
-        _width = 320;
-        _height = 320;
+        _width = 80;
+        _height = 80;
     }
     
     size(320, 320); //<>//
@@ -71,11 +76,11 @@ void setup()
     }
     else
     {
-        pixBuffer = MakeRandom(_width, _height);
-        mskBuffer = MakeNotMask(_width, _height);
+        //pixBuffer = MakeRandom(_width, _height);
+        //mskBuffer = MakeNotMask(_width, _height);
     }
     
-    frameRate(1000);
+    frameRate(5);
     
     if (testing)
     {
@@ -110,7 +115,8 @@ void draw()
     }
     else
     {
-        pixBuffer = MakeShift(pixBuffer);
+        pixBuffer = new int[_len];
+        //pixBuffer = StampRect(pixBuffer, rectX, rectY, rectW, rectH, color(255, 0, 0));
         if (hq)
         {
             DrawRaw(pixBuffer, _width, _height);
@@ -122,6 +128,8 @@ void draw()
             //DrawInterlace(pixBuffer, _width, _height);
         }
     } //<>//
+    
+    rectX++;
     
     if (debug)
     {
