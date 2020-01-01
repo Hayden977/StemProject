@@ -1,4 +1,6 @@
+// https://stackoverflow.com/a/17260533
 color[][] pixBuffer;
+color[][] textureBuffer;
 int[][] mskBuffer;
 int[][] halfBuffer;
                 
@@ -10,44 +12,45 @@ PImage img = null;
 
 final boolean usingHalf = true;
 final boolean grayscale = false;
-final boolean testing = false;
-final boolean debug = true;
+final boolean testing = true;
+final boolean debug = false;
 
-boolean hq = true;
+boolean hq = false;
 final int psize = 1; // Pixel Size
 
 int delta;
 int deltaTick, startTick, endTick;
 
-int rectX = 30,
-    rectY = 20,
-    rectW = 20,
-    rectH = 20;
+int rectX = 15,
+    rectY = 15,
+    rectW = 40,
+    rectH = 40;
 
 void setup()
 {   
     String[] urls = loadStrings("tests.txt"); // Gets list of image tests to perform
-    String url = urls[0]; // Gets link to test image //<>//
+    String url = urls[0]; // Gets link to test image
     String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
     img = loadImage(url, type);
     
-    if (img != null)
+    if (img != null) //<>//
     {
         _width = img.width;
         _height = img.height;
     }
     else
     {
-        _width = 320;
-        _height = 180;
+        _width = 640;
+        _height = 360;
     }
     
     size(320, 320); //<>//
-    surface.setSize(_width * psize, _height * psize);
+    surface.setSize(640 * psize, 360 * psize);
     
     _len = _width * _height;  
     pixBuffer = new color[_width][_height];
-    mskBuffer = new color[_width][_height];
+    textureBuffer = new color[_width][_height];
+    mskBuffer = new color[640][360];
         
     if (img != null)
     {
@@ -80,7 +83,8 @@ void setup()
                 }
             }
         }
-        mskBuffer = MakeNotMask(_width, _height);
+        textureBuffer = pixBuffer;
+        mskBuffer = MakeNotMask(640, 360);
     }
     else
     {
@@ -88,7 +92,10 @@ void setup()
         mskBuffer = MakeNotMask(_width, _height);
     }
     
-    frameRate(60);
+    frameRate(1000);
+    
+    _width = 640;
+    _height = 360;
     
     if (testing)
     {
@@ -108,9 +115,12 @@ void draw()
     
     background(0);
     
+    pixBuffer = new color[_width][_height];
+    pixBuffer = StampImage(pixBuffer, rectX, rectY, textureBuffer, 200, 200);
+    
     if (usingHalf)
     {
-        pixBuffer = MakeShift(pixBuffer, 1);
+        //pixBuffer = MakeShift(pixBuffer, 1);
         halfBuffer = MakeHalfPixels(pixBuffer, mskBuffer, _width, _height);
         if (hq)
         {
@@ -123,7 +133,7 @@ void draw()
     }
     else
     {
-        pixBuffer = MakeShift(pixBuffer, 1);
+        //pixBuffer = MakeShift(pixBuffer, 1);
         if (hq)
         {
             DrawRaw(pixBuffer, _width, _height);
@@ -135,8 +145,6 @@ void draw()
             //DrawInterlace(pixBuffer, _width, _height);
         }
     } //<>//
-    
-    rectX++;
     
     if (debug)
     {
@@ -157,16 +165,7 @@ void draw()
             stop();
         }
     }
-}
-
-void mousePressed()
-{
-    if(hq)
-    {
-        hq = false;
-    }
-    else
-    {
-        hq = true;
-    }
+    
+    rectX = mouseX - 100;
+    rectY = mouseY - 100;
 }
