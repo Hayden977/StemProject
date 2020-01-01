@@ -8,10 +8,12 @@ int _len; // Array length
 
 PImage img = null;
 
-final boolean usingHalf = false;
+final boolean usingHalf = true;
 final boolean grayscale = false;
 final boolean testing = false;
-final boolean ticking = true;
+final boolean debug = true;
+
+final boolean hq = true;
 final int psize = 1; // Pixel Size
 
 int delta;
@@ -83,7 +85,7 @@ void setup()
 
 void draw()
 {
-    if (ticking)
+    if (debug)
     {
         startTick = millis();
     }
@@ -97,23 +99,35 @@ void draw()
     {
         pixBuffer = MakeShift(pixBuffer);
         halfBuffer = MakeHalfPixels(pixBuffer, mskBuffer, _width, _height);
-        //DrawHalfFilterFirst(halfBuffer, mskBuffer, _width, _height);
-        DrawHalfFilterLast(halfBuffer, mskBuffer, _width, _height);
+        if (hq)
+        {
+            DrawHalfFilterFirst(halfBuffer, mskBuffer, _width, _height);
+        }
+        else
+        {
+            DrawHalfFilterLast(halfBuffer, mskBuffer, _width, _height);
+        }
     }
     else
     {
         pixBuffer = MakeShift(pixBuffer);
-        DrawRaw(pixBuffer, _width, _height);
-        //DrawFilterFirst(pixBuffer, mskBuffer, _width, _height);
-        //DrawFilterLast(pixBuffer, mskBuffer, _width, _height);
-        //DrawInterlace(pixBuffer, _width, _height);
+        if (hq)
+        {
+            DrawRaw(pixBuffer, _width, _height);
+            //DrawFilterFirst(pixBuffer, mskBuffer, _width, _height);
+        }
+        else
+        {
+            DrawFilterLast(pixBuffer, mskBuffer, _width, _height);
+            //DrawInterlace(pixBuffer, _width, _height);
+        }
     } //<>//
     
-    if (ticking)
+    if (debug)
     {
         endTick = millis();
         deltaTick = endTick - startTick;
-        println(deltaTick + "ms");
+        println(deltaTick + "ms hq:" + hq + " half:" + usingHalf);
     }
     
     if (testing)

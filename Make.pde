@@ -32,16 +32,16 @@ int[] MakeNotMask(int w, int h)
     {
         for (int j = 0; j < w; j++) // x, width, column, etc.
         {
-            if (i % 2 == 1) // Odd row
+            if (isOdd(i)) // Odd row
             {
                 int val = j % 2; // 0, 1, 0, 1, ...
-                int _index = w * i + j; // https://stackoverflow.com/a/2151141
+                int _index = Convert2dTo1d(j, i, w);
                 p[_index] = val;
             }
-            else if (i % 2 == 0) // Even row
+            else if (isEven(i)) // Even row
             {
                 int val = -(j % 2) + 1; // 1, 0, 1, 0, ...
-                int _index = w * i + j; // https://stackoverflow.com/a/2151141
+                int _index = Convert2dTo1d(j, i, w);
                 p[_index] = val;
             }
         }
