@@ -81,3 +81,38 @@ color[][] MakeHalfPixels(color[][] p, int[][] m, int w, int h)
     }
     return hp;
 }
+
+color[][] MakeTextureFromImage(PImage im, int w, int h, boolean gray)
+{
+    color[][] pBuf = new color[w][h];
+    im.loadPixels();
+    
+    if (gray)
+    {
+    for (int i = 0; i < (im.pixels.length / w); i++) 
+    {
+        for (int j = 0; j < (im.pixels.length / h); j++)
+        {
+            int pixelIndex = Convert2dTo1d(i, j, w);
+            int a = im.pixels[pixelIndex] >> 16 * 0 & 0xFF; // Extract alpha component
+            int r = im.pixels[pixelIndex] >> 16 * 1 & 0xFF; // Extract red component
+            int g = im.pixels[pixelIndex] >> 16 * 2 & 0xFF; // Extract green component
+            int b = im.pixels[pixelIndex] >> 16 * 3 & 0xFF; // Extract blue component
+            int average = int((r + g + b) / 3);
+            pBuf[i][j] = color(average);
+        }
+    }
+    }
+    else
+    {
+        for (int i = 0; i < (im.pixels.length / w); i++) 
+        {
+            for (int j = 0; j < (img.pixels.length / h); j++)
+            {
+                int pixelIndex = Convert2dTo1d(i, j, w);
+                pBuf[i][j] = im.pixels[pixelIndex];
+            }
+        }
+    }
+    return pBuf;
+}
