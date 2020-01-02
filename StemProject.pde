@@ -1,20 +1,22 @@
 // https://stackoverflow.com/a/17260533
 color[][] pixBuffer;
 color[][] textureBuffer;
+color[][] skyBuffer;
 int[][] mskBuffer;
 int[][] halfBuffer;
 
-PImage img = null;
+PImage tex = null;
+PImage sky = null;
 
 final boolean usingHalf = false;
 final boolean grayscale = false;
-final boolean testing = false;
+final boolean testing = true;
 final boolean debug = false;
 
-final int _width = 640;
-final int _height = 360;
+final int _width = 1280;
+final int _height = 720;
 
-boolean hq = true;
+boolean hq = false;
 final int psize = 1; // Pixel Size
 
 int delta;
@@ -30,7 +32,9 @@ void setup()
     String[] urls = loadStrings("tests.txt"); // Gets list of image tests to perform
     String url = urls[0]; // Gets link to test image
     String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
-    img = loadImage(url, type); //<>//
+    tex = loadImage(url, type);
+    
+    sky = loadImage("https://i.vimeocdn.com/video/439972201_1280x720.jpg", "jpg"); //<>//
     
     size(320, 320); //<>//
     surface.setSize(_width * psize, _height * psize);
@@ -38,12 +42,15 @@ void setup()
     pixBuffer = new color[_width][_height];
     
     textureBuffer = new color[200][200];
-    if (img != null)
+    if (tex != null)
     {
-        textureBuffer = MakeTextureFromImage(img, 200, 200, grayscale);
+        textureBuffer = MakeTextureFromImage(tex, 200, 200, grayscale);
     }
-    else {
-        textureBuffer = MakeRandom(200, 200);
+    
+    skyBuffer = new color[1280][720];
+    if (sky != null)
+    {
+        skyBuffer = MakeTextureFromImage(sky, 1280, 720, grayscale);
     }
     
     mskBuffer = new color[_width][_height];
@@ -70,7 +77,7 @@ void draw()
     background(0);
     
     pixBuffer = new color[_width][_height];
-    pixBuffer = StampRect(pixBuffer, 0, 0, _width, _height, color(255, 0, 0));
+    pixBuffer = StampImage(pixBuffer, 0, 0, skyBuffer, _width, _height);
     pixBuffer = StampImage(pixBuffer, rectX, rectY, textureBuffer, 200, 200);
     
     if (usingHalf)

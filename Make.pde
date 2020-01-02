@@ -105,9 +105,9 @@ color[][] MakeTextureFromImage(PImage im, int w, int h, boolean gray)
     }
     else
     {
-        for (int i = 0; i < (im.pixels.length / w); i++) 
+        for (int i = 0; i < (w); i++) 
         {
-            for (int j = 0; j < (img.pixels.length / h); j++)
+            for (int j = 0; j < (h); j++)
             {
                 int pixelIndex = Convert2dTo1d(i, j, w);
                 pBuf[i][j] = im.pixels[pixelIndex];
