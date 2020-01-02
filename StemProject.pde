@@ -12,10 +12,10 @@ PImage img = null;
 
 final boolean usingHalf = true;
 final boolean grayscale = false;
-final boolean testing = true;
+final boolean testing = false;
 final boolean debug = false;
 
-boolean hq = false;
+boolean hq = true;
 final int psize = 1; // Pixel Size
 
 int delta;

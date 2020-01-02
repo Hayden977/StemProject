@@ -62,8 +62,8 @@ color[][] StampImage(color[][] p, int rx, int ry, color[][] im, int iw, int ih)
     {
         for (int j = yMin; j < yMax; j++)
         {
-            int im_x = i - xMin;
-            int im_y = j - yMin;
+            int im_x = i - rx;
+            int im_y = j - ry;
             temp[i][j] = im[im_x][im_y];
         }
     }
