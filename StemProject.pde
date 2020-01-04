@@ -4,29 +4,29 @@ PixelBuffer textureBuffer;
 PixelBuffer skyBuffer;
 
 MaskBuffer mskBuffer;
-Buffer halfBuffer;
+HalfPixelBuffer halfBuffer;
+
+Renderer draw;
 
 PImage tex = null;
 PImage sky = null;
 
-final boolean usingHalf = false;
+final boolean usingHalf = true;
 final boolean grayscale = false;
 final boolean testing = true;
 final boolean debug = false;
 
-final int _width = 640;
-final int _height = 360;
+final int _width = 200;
+final int _height = 200;
 
-boolean hq = false;
-final int psize = 2; // Pixel Size
+final boolean hq = true;
+final int psize = 1; // Pixel Size
 
 int delta;
 int deltaTick, startTick, endTick;
 
-int rectX = 15,
-    rectY = 15,
-    rectW = 40,
-    rectH = 40;
+int rectX = 0,
+    rectY = 0;
 
 void setup()
 {   
@@ -57,6 +57,10 @@ void setup()
     mskBuffer = new MaskBuffer(_width, _height);
     mskBuffer.makeNotMask(); //<>//
     
+    halfBuffer = new HalfPixelBuffer(_width, _height);
+    
+    draw = new Renderer(psize, hq, usingHalf);
+    
     frameRate(1000);
     
     if (testing)
@@ -82,29 +86,11 @@ void draw()
     pixBuffer.stampRect(0, 0, _width, _height, color(255, 128, 255));
     pixBuffer.stampImage(rectX, rectY, textureBuffer);
     
-    if (usingHalf)
-    {
-        halfBuffer.buffer = MakeHalfPixels(pixBuffer, mskBuffer, _width, _height);
-        if (hq)
-        {
-            DrawHalfFilterFirst(halfBuffer, mskBuffer, _width, _height);
-        }
-        else
-        {
-            DrawHalfFilterLast(halfBuffer, mskBuffer, _width, _height);
-        }
-    }
-    else
-    {
-        if (hq)
-        {
-            DrawRaw(pixBuffer, _width, _height);
-        }
-        else
-        {
-            DrawFilterLast(pixBuffer, mskBuffer, _width, _height);
-        }
-    } //<>//
+    halfBuffer.MakeHalfPixels(pixBuffer, mskBuffer);
+    draw.HalfFilterFirst(halfBuffer, mskBuffer, _width, _height);
+    draw.HalfFilterLast(halfBuffer, mskBuffer, _width, _height);
+    draw.Raw(pixBuffer, _width, _height);
+    draw.FilterLast(pixBuffer, mskBuffer, _width, _height); //<>//
     
     if (debug)
     {
@@ -116,7 +102,7 @@ void draw()
     if (testing)
     {
         println(frameRate, frameCount);
-        if (frameCount == 200*200)
+        if (frameCount == _width*_height)
         {
             int start = delta;
             int now = millis();
@@ -126,6 +112,4 @@ void draw()
         }
     }
     
-    rectX = mouseX - (100 / psize);
-    rectY = mouseY - (100 / psize);
 }

@@ -200,6 +200,34 @@ class PixelBuffer extends Buffer
     
 }
 
+class HalfPixelBuffer extends PixelBuffer
+{
+    int hw, hh;
+    HalfPixelBuffer(int _w, int _h)
+    {
+        super(_w / 2, _h / 2);
+        hw = _w / 2;
+        hh = _h / 2;
+    }
+    
+    void MakeHalfPixels(Buffer p, Buffer m)
+    {
+        for (int i = 0; i < p.w; i++) // Go through mask
+        {
+            for (int j = 0; j < p.h; j++)
+            {
+                if (m.buffer[i][j] == 1) // If can see through mask
+                {
+                    int i_index = i / 2; // Transform mask index to pixel index
+                    int j_index = j / 2; // Transform mask index to pixel index
+                    this.buffer[i_index][j_index] = p.buffer[i][j];
+                }
+            }
+        }
+    }
+    
+}
+
 class MaskBuffer extends Buffer
 {
     MaskBuffer(int _w, int _h)
@@ -213,12 +241,12 @@ class MaskBuffer extends Buffer
         {
             for (int j = 0; j < this.h; j++) // x, width, column, etc.
                 {
-                    if (isOdd(i)) // Odd row
+                    if (i % 2 == 1) // Odd row
                     {
                         int val = j % 2; // 0, 1, 0, 1, ...
                         this.buffer[i][j] = val;
                     }
-                    else if (isEven(i)) // Even row
+                    else if (i % 2 == 0) // Even row
                     {
                         int val = -(j % 2) + 1; // 1, 0, 1, 0, ...
                         this.buffer[i][j] = val;
