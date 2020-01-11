@@ -2,14 +2,14 @@ static class Buffer
 {
     int w, h;
     color[][] buffer;
-    
+
     Buffer(int _w, int _h)
     {
         w = _w;
         h = _h;
         buffer = new color[_w][_h];
     }
-    
+
     void flush()
     {
         for (int i = 0; i < (this.w); i++) 
@@ -20,27 +20,27 @@ static class Buffer
             }
         }
     }
-    
+
     void shift(int shift) // https://stackoverflow.com/a/34277492
     {
         color[][] temp = this.buffer;
         for (int row = 0; row < temp.length; row++) {
             int rowLength = temp[row].length;
-            
+
             // keep shift within bounds of the array
             shift = shift % rowLength;
-            
+
             // copy out elements that will "fall off"
             color[] tmp = new color[shift];
             for (int i = 0; i < shift; i++) {
                 tmp[i] = temp[row][i];
             }
-            
+
             // shift like normal
             for (int col = 0; col < rowLength - shift; col++) {
                 temp[row][col] = temp[row][col + shift];
             }
-            
+
             // copy back the "fallen off" elements
             for (int i = 0; i < shift; i++) {
                 temp[row][i + (rowLength - shift)] = tmp[i];
@@ -48,7 +48,7 @@ static class Buffer
         }
         this.buffer = temp;
     }
-    
+
     static int[] Convert1dTo2d(int index, int w, int h)
     {
         int[] temp = new int[2];
@@ -72,7 +72,7 @@ class PixelBuffer extends Buffer
     {
         super(_w, _h);
     }
-    
+
     void colorTex(int r, int g, int b)
     {
         for (int i = 0; i < (this.w); i++) 
@@ -83,7 +83,7 @@ class PixelBuffer extends Buffer
             }
         }
     }
-    
+
     void randomTex()
     {
         for (int i = 0; i < this.w; i++)
@@ -97,7 +97,7 @@ class PixelBuffer extends Buffer
             }
         }
     }
-    
+
     void imageTex(PImage im, boolean isGray)
     {
         im.loadPixels();
@@ -116,8 +116,7 @@ class PixelBuffer extends Buffer
                     this.buffer[i][j] = color(average);
                 }
             }
-        }
-        else
+        } else
         {
             for (int i = 0; i < (this.w); i++) 
             {
@@ -129,7 +128,7 @@ class PixelBuffer extends Buffer
             }
         }
     }
-    
+
     void stampRect(int rx, int ry, int rw, int rh, color c)
     {
         int xMin = rx, xMax = rx + rw;
@@ -162,7 +161,7 @@ class PixelBuffer extends Buffer
             }
         }
     }
-    
+
     void stampImage(int rx, int ry, PixelBuffer im)
     {
         int xMin = rx, xMax = rx + im.w;
@@ -197,7 +196,6 @@ class PixelBuffer extends Buffer
             }
         }
     }
-    
 }
 
 class HalfPixelBuffer extends PixelBuffer
@@ -209,7 +207,7 @@ class HalfPixelBuffer extends PixelBuffer
         hw = _w / 2;
         hh = _h / 2;
     }
-    
+
     void MakeHalfPixels(Buffer p, Buffer m)
     {
         for (int i = 0; i < p.w; i++) // Go through mask
@@ -225,7 +223,6 @@ class HalfPixelBuffer extends PixelBuffer
             }
         }
     }
-    
 }
 
 class MaskBuffer extends Buffer
@@ -234,25 +231,23 @@ class MaskBuffer extends Buffer
     {
         super(_w, _h);
     }
-    
+
     void makeNotMask()
     {
         for (int i = 0; i < this.w; i++) // y, height, row, etc. 
         {
             for (int j = 0; j < this.h; j++) // x, width, column, etc.
+            {
+                if (i % 2 == 1) // Odd row
                 {
-                    if (i % 2 == 1) // Odd row
-                    {
-                        int val = j % 2; // 0, 1, 0, 1, ...
-                        this.buffer[i][j] = val;
-                    }
-                    else if (i % 2 == 0) // Even row
-                    {
-                        int val = -(j % 2) + 1; // 1, 0, 1, 0, ...
-                        this.buffer[i][j] = val;
-                    }
+                    int val = j % 2; // 0, 1, 0, 1, ...
+                    this.buffer[i][j] = val;
+                } else if (i % 2 == 0) // Even row
+                {
+                    int val = -(j % 2) + 1; // 1, 0, 1, 0, ...
+                    this.buffer[i][j] = val;
                 }
+            }
         }
     }
-    
 }
