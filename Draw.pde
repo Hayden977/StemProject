@@ -13,12 +13,6 @@ class Renderer //<>//
 
     void Raw(Buffer p, int w, int h)
     {
-        if (!this.q) {
-            return;
-        } // High quality
-        if (this.h) {
-            return;
-        } // Full
         for (int i = 0; i < w; i++) 
         {
             for (int j = 0; j < h; j++)
@@ -31,12 +25,6 @@ class Renderer //<>//
 
     void FilterLast(Buffer p, Buffer m, int w, int h) 
     {
-        if (this.q) {
-            return;
-        } // Low quality
-        if (this.h) {
-            return;
-        } // Full
         for (int i = 0; i < w; i++) 
         {
             for (int j = 0; j < h; j++)
@@ -52,12 +40,6 @@ class Renderer //<>//
 
     void FilterFirst(Buffer p, Buffer m, int w, int h)
     {
-        if (!this.q) {
-            return;
-        } // High quality
-        if (this.h) {
-            return;
-        } // Full
         for (int i = 0; i < w; i++)
         {
             for (int j = 0; j < h; j++)
@@ -73,36 +55,24 @@ class Renderer //<>//
 
     void Interlace(Buffer p, int w, int h)
     {
-        if (!this.q) {
-            return;
-        } // High quality
-        if (this.h) {
-            return;
-        } // Full
         if (frameCount % 2 == 0) // Check if on even frame
         {
             for (int i = 0; i < w; i++)
             {
-                for (int j = 0; j < h; j++)
+                for (int j = 0; j < h / 2; j++)
                 {
-                    if (j % 2 == 0) // Draw even lines
-                    {
-                        fill(p.buffer[i][j]);
-                        rect(i * this.ps, j * this.ps, this.ps, this.ps);
-                    }
+                    fill(p.buffer[i][j * 2]);
+                    rect(i * this.ps, j * 2 * this.ps, this.ps, this.ps);
                 }
             }
         } else // Check if on odd frame (not even)
         {
             for (int i = 0; i < w; i++)
             {
-                for (int j = 0; j < h; j++)
+                for (int j = 0; j < h / 2; j++)
                 {
-                    if (j % 2 == 1) // Draw odd lines
-                    {
-                        fill(p.buffer[i][j]);
-                        rect(i * this.ps, j * this.ps, this.ps, this.ps);
-                    }
+                    fill(p.buffer[i][j * 2 + 1]);
+                    rect(i * this.ps, j * 2 * this.ps +  this.ps, this.ps, this.ps);
                 }
             }
         }
@@ -110,12 +80,6 @@ class Renderer //<>//
 
     void HalfFilterLast(Buffer hp, Buffer m, int w, int h)
     {
-        if (this.q) {
-            return;
-        } // Low quality
-        if (!this.h) {
-            return;
-        } // Half
         for (int i = 0; i < w / 2; i++)
         {
             for (int j = 0; j < h / 2; j++)
@@ -135,12 +99,6 @@ class Renderer //<>//
 
     void HalfFilterFirst(Buffer hp, Buffer m, int w, int h)
     {
-        if (!this.q) {
-            return;
-        } // High quality
-        if (!this.h) {
-            return;
-        } // Half
         for (int i = 0; i < w; i++)
         {
             for (int j = 0; j < h; j++)

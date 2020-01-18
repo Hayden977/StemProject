@@ -85,12 +85,13 @@ void draw()
     pixBuffer.flush();
     pixBuffer.stampRect(0, 0, _width, _height, color(255, 128, 255));
     pixBuffer.stampImage(rectX, rectY, textureBuffer);
-
-    halfBuffer.MakeHalfPixels(pixBuffer, mskBuffer);
-    draw.HalfFilterFirst(halfBuffer, mskBuffer, _width, _height);
-    draw.HalfFilterLast(halfBuffer, mskBuffer, _width, _height);
-    draw.Raw(pixBuffer, _width, _height);
-    draw.FilterLast(pixBuffer, mskBuffer, _width, _height);
+    
+    //halfBuffer.MakeHalfPixels(pixBuffer, mskBuffer);
+    //draw.HalfFilterFirst(halfBuffer, mskBuffer, _width, _height);
+    //draw.HalfFilterLast(halfBuffer, mskBuffer, _width, _height);
+    //draw.Raw(pixBuffer, _width, _height);
+    //draw.FilterLast(pixBuffer, mskBuffer, _width, _height);
+    //draw.Interlace(pixBuffer, _width, _height);
 
     if (debug)
     {
