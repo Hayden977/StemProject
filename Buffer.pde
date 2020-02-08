@@ -7,16 +7,16 @@ static class Buffer
     {
         w = _w;
         h = _h;
-        buffer = new color[_w][_h];
+        buffer = new color[_h][_w];
     }
 
     void flush()
     {
-        for (int i = 0; i < (this.w); i++) 
+        for (int y = 0; y < (this.h); y++) 
         {
-            for (int j = 0; j < (this.h); j++)
+            for (int x = 0; x < (this.w); x++)
             {
-                this.buffer[i][j] = 0;
+                this.buffer[y][x] = 0;
             }
         }
     }
@@ -75,25 +75,25 @@ class PixelBuffer extends Buffer
 
     void colorTex(int r, int g, int b)
     {
-        for (int i = 0; i < (this.w); i++) 
+        for (int y = 0; y < (this.h); y++) 
         {
-            for (int j = 0; j < (this.h); j++)
+            for (int x = 0; x < (this.w); x++)
             {
-                this.buffer[i][j] = color(r, g, b);
+                this.buffer[y][x] = color(r, g, b);
             }
         }
     }
 
     void randomTex()
     {
-        for (int i = 0; i < this.w; i++)
+        for (int y = 0; y < this.h; y++)
         {
-            for (int j = 0; j < this.h; j++)
+            for (int x = 0; x < this.w; x++)
             {
                 int valr = int(random(255));
                 int valg = int(random(255));
                 int valb = int(random(255));
-                this.buffer[i][j] = color(valr, valg, valb);
+                this.buffer[y][x] = color(valr, valg, valb);
             }
         }
     }
@@ -103,27 +103,27 @@ class PixelBuffer extends Buffer
         im.loadPixels();
         if (isGray)
         {
-            for (int i = 0; i < (this.w); i++) 
+            for (int y = 0; y < (this.h); y++) 
             {
-                for (int j = 0; j < (this.h); j++)
+                for (int x = 0; x < (this.w); x++)
                 {
-                    int pixelIndex = Convert2dTo1d(i, j, w);
+                    int pixelIndex = Convert2dTo1d(x, y, w);
                     int a = im.pixels[pixelIndex] >> 16 * 0 & 0xFF; // Extract alpha component
                     int r = im.pixels[pixelIndex] >> 16 * 1 & 0xFF; // Extract red component
                     int g = im.pixels[pixelIndex] >> 16 * 2 & 0xFF; // Extract green component
                     int b = im.pixels[pixelIndex] >> 16 * 3 & 0xFF; // Extract blue component
                     int average = int((r + g + b) / 3);
-                    this.buffer[i][j] = color(average);
+                    this.buffer[y][x] = color(average);
                 }
             }
         } else
         {
-            for (int i = 0; i < (this.w); i++) 
+            for (int y = 0; y < (this.h); y++) 
             {
-                for (int j = 0; j < (this.h); j++)
+                for (int x = 0; x < (this.w); x++)
                 {
-                    int pixelIndex = Convert2dTo1d(i, j, w);
-                    this.buffer[i][j] = im.pixels[pixelIndex];
+                    int pixelIndex = Convert2dTo1d(x, y, w);
+                    this.buffer[y][x] = im.pixels[pixelIndex];
                 }
             }
         }
@@ -138,26 +138,26 @@ class PixelBuffer extends Buffer
             xMin = 0;
             // xMin is untouched, would be -1 + 4 for example
         }
-        if (xMax > _width)
+        if (xMax > w_width)
         {
             // xMin is untouched
-            xMax = _width;
+            xMax = w_width;
         }
         if (yMin < 0)
         {
             yMin = 0;
             // yMax is untouched, would be -2 + 5 for example
         }
-        if (yMax > _height)
+        if (yMax > w_height)
         {
             // yMin is untouched
-            yMax = _height;
+            yMax = w_height;
         }
-        for (int i = xMin; i < xMax; i++)
+        for (int y = yMin; y < yMax; y++)
         {
-            for (int j = yMin; j < yMax; j++)
+            for (int x = xMin; x < xMax; x++)
             {
-                this.buffer[i][j] = c;
+                this.buffer[y][x] = c;
             }
         }
     }
@@ -171,28 +171,28 @@ class PixelBuffer extends Buffer
             xMin = 0;
             // xMin is untouched, would be -1 + 4 for example
         }
-        if (xMax > _width)
+        if (xMax > w_width)
         {
             // xMin is untouched
-            xMax = _width;
+            xMax = w_width;
         }
         if (yMin < 0)
         {
             yMin = 0;
             // yMax is untouched, would be -2 + 5 for example
         }
-        if (yMax > _height)
+        if (yMax > w_height)
         {
             // yMin is untouched
-            yMax = _height;
+            yMax = w_height;
         }
-        for (int i = xMin; i < xMax; i++)
+        for (int y = yMin; y < yMax; y++)
         {
-            for (int j = yMin; j < yMax; j++)
+            for (int x = xMin; x < xMax; x++)
             {
-                int im_x = i - rx;
-                int im_y = j - ry;
-                this.buffer[i][j] = im.buffer[im_x][im_y];
+                int im_x = x - rx;
+                int im_y = y - ry;
+                this.buffer[y][x] = im.buffer[im_y][im_x];
             }
         }
     }
@@ -210,15 +210,15 @@ class HalfPixelBuffer extends PixelBuffer
 
     void MakeHalfPixels(Buffer p, Buffer m)
     {
-        for (int i = 0; i < p.w; i++) // Go through mask
+        for (int y = 0; y < p.h; y++) // Go through mask
         {
-            for (int j = 0; j < p.h; j++)
+            for (int x = 0; x < p.w; x++)
             {
-                if (m.buffer[i][j] == 1) // If can see through mask
+                if (m.buffer[y][x] == 1) // If can see through mask
                 {
-                    int i_index = i / 2; // Transform mask index to pixel index
-                    int j_index = j / 2; // Transform mask index to pixel index
-                    this.buffer[i_index][j_index] = p.buffer[i][j];
+                    int x_index = x / 2; // Transform mask index to pixel index
+                    int y_index = y / 2; // Transform mask index to pixel index
+                    this.buffer[y_index][x_index] = p.buffer[y][x];
                 }
             }
         }
@@ -234,18 +234,18 @@ class MaskBuffer extends Buffer
 
     void makeNotMask()
     {
-        for (int i = 0; i < this.w; i++) // y, height, row, etc. 
+        for (int y = 0; y < this.h; y++) // y, height, row, etc. 
         {
-            for (int j = 0; j < this.h; j++) // x, width, column, etc.
+            for (int x = 0; x < this.w; x++) // x, width, column, etc.
             {
-                if (i % 2 == 1) // Odd row
+                if (y % 2 == 1) // Odd row
                 {
-                    int val = j % 2; // 0, 1, 0, 1, ...
-                    this.buffer[i][j] = val;
-                } else if (i % 2 == 0) // Even row
+                    int val = x % 2; // 0, 1, 0, 1, ...
+                    this.buffer[y][x] = val;
+                } else if (y % 2 == 0) // Even row
                 {
-                    int val = -(j % 2) + 1; // 1, 0, 1, 0, ...
-                    this.buffer[i][j] = val;
+                    int val = -(x % 2) + 1; // 1, 0, 1, 0, ...
+                    this.buffer[y][x] = val;
                 }
             }
         }

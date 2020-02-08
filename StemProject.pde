@@ -1,4 +1,4 @@
-// https://stackoverflow.com/a/17260533 //<>// //<>// //<>// //<>//
+// https://stackoverflow.com/a/17260533 //<>//
 PixelBuffer pixBuffer;
 PixelBuffer textureBuffer;
 PixelBuffer skyBuffer;
@@ -13,11 +13,11 @@ PImage sky = null;
 
 final boolean usingHalf = true;
 final boolean grayscale = false;
-final boolean testing = true;
-final boolean debug = false;
+final boolean testing = false;
+final boolean debug = true;
 
-final int _width = 200;
-final int _height = 200;
+final int w_width = 1280;
+final int w_height = 720;
 
 final boolean hq = true;
 final int psize = 1; // Pixel Size
@@ -31,33 +31,33 @@ int rectX = 0,
 void setup()
 {   
     String[] urls = loadStrings("tests.txt"); // Gets list of image tests to perform
-    String url = urls[0]; // Gets link to test image
+    String url = urls[4]; // Gets link to test image
     String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
     tex = loadImage(url, type);
 
     sky = loadImage("https://i.vimeocdn.com/video/439972201_1280x720.jpg", "jpg");
 
     size(320, 320);
-    surface.setSize(_width * psize, _height * psize);
+    surface.setSize(w_width * psize, w_height * psize);
 
-    pixBuffer = new PixelBuffer(_width, _height);
+    pixBuffer = new PixelBuffer(w_width, w_height);
 
-    textureBuffer = new PixelBuffer(200, 200);
+    textureBuffer = new PixelBuffer(400, 400);
     if (tex != null)
     {
         textureBuffer.imageTex(tex, grayscale);
     }
 
-    skyBuffer = new PixelBuffer(_width, _height);
+    skyBuffer = new PixelBuffer(w_width, w_height);
     if (sky != null)
     {
         skyBuffer.imageTex(sky, grayscale);
     }
 
-    mskBuffer = new MaskBuffer(_width, _height);
+    mskBuffer = new MaskBuffer(w_width, w_height);
     mskBuffer.makeNotMask();
 
-    halfBuffer = new HalfPixelBuffer(_width, _height);
+    halfBuffer = new HalfPixelBuffer(w_width, w_height);
 
     draw = new Renderer(psize, hq, usingHalf);
 
@@ -71,6 +71,12 @@ void setup()
 
 void draw()
 {
+    
+    int cpu1 = millis();
+    
+    rectX = mouseX;
+    rectY = mouseY;
+
     if (debug)
     {
         startTick = millis();
@@ -80,30 +86,38 @@ void draw()
 
     background(0);
 
-    skyBuffer.shift(1);
+    skyBuffer.shift(1281);
 
     pixBuffer.flush();
-    pixBuffer.stampRect(0, 0, _width, _height, color(255, 128, 255));
+    pixBuffer.stampRect(0, 0, w_width, w_height, color(255, 128, 255));
+    pixBuffer.stampImage(0, 0, skyBuffer);
     pixBuffer.stampImage(rectX, rectY, textureBuffer);
+
+    int cpu2 = millis();
+    int gpu1 = millis();
+
+    halfBuffer.MakeHalfPixels(pixBuffer, mskBuffer);
+    draw.HalfFilterFirst(halfBuffer, mskBuffer, w_width, w_height);
+    //draw.HalfFilterLast(halfBuffer, mskBuffer, w_width, w_height);
+    //draw.Raw(pixBuffer, w_width, w_height);
+    //draw.FilterLast(pixBuffer, mskBuffer, w_width, w_height);
+    //draw.Interlace(pixBuffer, w_width, w_height);
     
-    //halfBuffer.MakeHalfPixels(pixBuffer, mskBuffer);
-    //draw.HalfFilterFirst(halfBuffer, mskBuffer, _width, _height);
-    //draw.HalfFilterLast(halfBuffer, mskBuffer, _width, _height);
-    //draw.Raw(pixBuffer, _width, _height);
-    //draw.FilterLast(pixBuffer, mskBuffer, _width, _height);
-    //draw.Interlace(pixBuffer, _width, _height);
+    int gpu2 = millis();
 
     if (debug)
     {
         endTick = millis();
         deltaTick = endTick - startTick;
-        println(deltaTick + "ms hq:" + hq + " half:" + usingHalf);
+        int cpu = cpu2 - cpu1;
+        int gpu = gpu2 - gpu1;
+        println(deltaTick + "ms hq:" + hq + " half:" + usingHalf + " c:" + cpu + " g:" + gpu);
     }
 
     if (testing)
     {
         println(frameRate, frameCount);
-        if (frameCount == _width*_height)
+        if (frameCount == w_width*w_height)
         {
             int start = delta;
             int now = millis();

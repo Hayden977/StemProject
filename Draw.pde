@@ -13,26 +13,26 @@ class Renderer //<>//
 
     void Raw(Buffer p, int w, int h)
     {
-        for (int i = 0; i < w; i++) 
+        for (int y = 0; y < h; y++) 
         {
-            for (int j = 0; j < h; j++)
+            for (int x = 0; x < w; x++)
             {
-                fill(p.buffer[i][j]);
-                rect(i * this.ps, j * this.ps, this.ps, this.ps);
+                fill(p.buffer[y][x]);
+                rect(x * this.ps, y * this.ps, this.ps, this.ps);
             }
         }
     }
 
     void FilterLast(Buffer p, Buffer m, int w, int h) 
     {
-        for (int i = 0; i < w; i++) 
+        for (int y = 0; y < h; y++) 
         {
-            for (int j = 0; j < h; j++)
+            for (int x = 0; x < w; x++)
             {
-                if (m.buffer[i][j] == 1) 
+                if (m.buffer[y][x] == 1) 
                 {
-                    fill(p.buffer[i][j]);
-                    rect(i * this.ps, j * this.ps, this.ps, this.ps);
+                    fill(p.buffer[y][x]);
+                    rect(x * this.ps, y * this.ps, this.ps, this.ps);
                 }
             }
         }
@@ -40,14 +40,14 @@ class Renderer //<>//
 
     void FilterFirst(Buffer p, Buffer m, int w, int h)
     {
-        for (int i = 0; i < w; i++)
+        for (int y = 0; y < h; y++)
         {
-            for (int j = 0; j < h; j++)
+            for (int x = 0; x < w; x++)
             {
-                if (m.buffer[i][j] == 1)
+                if (m.buffer[y][x] == 1)
                 {
-                    fill(p.buffer[i][j]);
-                    rect(i * this.ps, j * this.ps, this.ps, this.ps);
+                    fill(p.buffer[y][x]);
+                    rect(x * this.ps, y * this.ps, this.ps, this.ps);
                 }
             }
         }
@@ -57,22 +57,22 @@ class Renderer //<>//
     {
         if (frameCount % 2 == 0) // Check if on even frame
         {
-            for (int i = 0; i < w; i++)
+            for (int y = 0; y < h / 2; y++)
             {
-                for (int j = 0; j < h / 2; j++)
+                for (int x = 0; x < w; x++)
                 {
-                    fill(p.buffer[i][j * 2]);
-                    rect(i * this.ps, j * 2 * this.ps, this.ps, this.ps);
+                    fill(p.buffer[y * 2][x]);
+                    rect(x * this.ps, y * 2 * this.ps, this.ps, this.ps);
                 }
             }
         } else // Check if on odd frame (not even)
         {
-            for (int i = 0; i < w; i++)
+            for (int y = 0; y < h / 2; y++)
             {
-                for (int j = 0; j < h / 2; j++)
+                for (int x = 0; x < w; x++)
                 {
-                    fill(p.buffer[i][j * 2 + 1]);
-                    rect(i * this.ps, j * 2 * this.ps +  this.ps, this.ps, this.ps);
+                    fill(p.buffer[y * 2 + 1][x]);
+                    rect(x * this.ps, y * 2 * this.ps +  this.ps, this.ps, this.ps);
                 }
             }
         }
@@ -80,18 +80,18 @@ class Renderer //<>//
 
     void HalfFilterLast(Buffer hp, Buffer m, int w, int h)
     {
-        for (int i = 0; i < w / 2; i++)
+        for (int y = 0; y < h / 2; y++)
         {
-            for (int j = 0; j < h / 2; j++)
+            for (int x = 0; x < w / 2; x++)
             {
-                int i_index = i * 2;
-                int j_index = j * 2;
-                if (m.buffer[i_index][j_index] == 1)
+                int x_index = x * 2;
+                int y_index = y * 2;
+                if (m.buffer[y_index][x_index] == 1)
                 {
                     //int x = 2 * i;
                     //int y = 2 * j;
-                    fill(hp.buffer[i][j]);
-                    rect(i_index * this.ps, j_index * this.ps, this.ps, this.ps);
+                    fill(hp.buffer[y][x]);
+                    rect(x_index * this.ps, y_index * this.ps, this.ps, this.ps);
                 }
             }
         }
@@ -99,16 +99,16 @@ class Renderer //<>//
 
     void HalfFilterFirst(Buffer hp, Buffer m, int w, int h)
     {
-        for (int i = 0; i < w; i++)
+        for (int y = 0; y < h; y++)
         {
-            for (int j = 0; j < h; j++)
+            for (int x = 0; x < w; x++)
             {
-                if (m.buffer[i][j] == 1)
+                if (m.buffer[y][x] == 1)
                 {
-                    int i_hpindex = i / 2;
-                    int j_hpindex = j / 2;
-                    fill(hp.buffer[i_hpindex][j_hpindex]);
-                    rect(i * this.ps, j * this.ps, this.ps, this.ps);
+                    int x_hpindex = x / 2;
+                    int y_hpindex = y / 2;
+                    fill(hp.buffer[y_hpindex][x_hpindex]);
+                    rect(x * this.ps, y * this.ps, this.ps, this.ps);
                 }
             }
         }
