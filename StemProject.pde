@@ -1,4 +1,4 @@
-PixelBuffer pixBuffer; //<>//
+PixelBuffer pixBuffer; //<>// //<>//
 PixelBuffer textureBuffer;
 PixelBuffer skyBuffer;
 
