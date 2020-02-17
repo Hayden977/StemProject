@@ -1,5 +1,4 @@
-// https://stackoverflow.com/a/17260533 //<>//
-PixelBuffer pixBuffer;
+PixelBuffer pixBuffer; //<>//
 PixelBuffer textureBuffer;
 PixelBuffer skyBuffer;
 
@@ -13,20 +12,25 @@ PImage sky = null;
 
 final boolean usingHalf = true;
 final boolean grayscale = false;
-final boolean testing = false;
+final boolean testing = true;
 final boolean debug = true;
 
 final int w_width = 1280;
 final int w_height = 720;
 
 final boolean hq = true;
-final int psize = 1; // Pixel Size
 
 int delta;
 int deltaTick, startTick, endTick;
 
 int rectX = 0, 
     rectY = 0;
+
+void settings()
+{
+    size(w_width, w_height);
+    noSmooth();
+}
 
 void setup()
 {   
@@ -36,9 +40,6 @@ void setup()
     tex = loadImage(url, type);
 
     sky = loadImage("https://i.vimeocdn.com/video/439972201_1280x720.jpg", "jpg");
-
-    size(320, 320);
-    surface.setSize(w_width * psize, w_height * psize);
 
     pixBuffer = new PixelBuffer(w_width, w_height);
 
@@ -59,7 +60,7 @@ void setup()
 
     halfBuffer = new HalfPixelBuffer(w_width, w_height);
 
-    draw = new Renderer(psize, hq, usingHalf);
+    draw = new Renderer();
 
     frameRate(1000);
 
@@ -83,10 +84,10 @@ void draw()
     }
 
     noStroke();
-
+    clear();
     background(0);
 
-    skyBuffer.shift(1281);
+    skyBuffer.shift(1);
 
     pixBuffer.flush();
     pixBuffer.stampRect(0, 0, w_width, w_height, color(255, 128, 255));
@@ -96,10 +97,10 @@ void draw()
     int cpu2 = millis();
     int gpu1 = millis();
 
-    halfBuffer.MakeHalfPixels(pixBuffer, mskBuffer);
-    draw.HalfFilterFirst(halfBuffer, mskBuffer, w_width, w_height);
+    //halfBuffer.MakeHalfPixels(pixBuffer, mskBuffer);
+    //draw.HalfFilterFirst(halfBuffer, mskBuffer, w_width, w_height);
     //draw.HalfFilterLast(halfBuffer, mskBuffer, w_width, w_height);
-    //draw.Raw(pixBuffer, w_width, w_height);
+    draw.Raw(pixBuffer, w_width, w_height);
     //draw.FilterLast(pixBuffer, mskBuffer, w_width, w_height);
     //draw.Interlace(pixBuffer, w_width, w_height);
     
@@ -117,7 +118,7 @@ void draw()
     if (testing)
     {
         println(frameRate, frameCount);
-        if (frameCount == w_width*w_height)
+        if (frameCount == w_width)
         {
             int start = delta;
             int now = millis();
