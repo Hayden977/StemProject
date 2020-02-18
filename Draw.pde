@@ -40,23 +40,23 @@ class Renderer //<>// //<>//
                 set(x, y * 2 + 1, p.buffer[y * 2 + 1][x]);
     }
 
-    void HalfFilterLast(Buffer hp, Buffer m, int w, int h)
+    void CompressedFilterLast(CompressedPixelBuffer cp, Buffer m, int w, int h)
     {
-        for (int y = 0; y < h / 2; y++)
-            for (int x = 0; x < w / 2; x++)
+        for (int y = 0; y < h / cp.comp; y++)
+            for (int x = 0; x < w / cp.comp; x++)
                 // int x_i = x * 2;
                 // int y_i = y * 2;
-                if (m.buffer[y * 2][x * 2] == 1)
-                    set(x * 2, y * 2, hp.buffer[y][x]);
+                if (m.buffer[y * cp.comp][x * cp.comp] == 1)
+                    set(x * cp.comp, y * cp.comp, cp.buffer[y][x]);
     }
 
-    void HalfFilterFirst(Buffer hp, Buffer m, int w, int h)
+    void CompressedFilterFirst(CompressedPixelBuffer cp, Buffer m, int w, int h)
     {
         for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++)
                 if (m.buffer[y][x] == 1)
                     // int x_hpindex = x / 2;
                     // int y_hpindex = y / 2;
-                    set(x, y, hp.buffer[y / 2][x / 2]);
+                    set(x, y, cp.buffer[y / cp.comp][x / cp.comp]);
     }
 }

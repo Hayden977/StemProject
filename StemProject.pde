@@ -1,30 +1,33 @@
-PixelBuffer pixBuffer; //<>// //<>//
+PixelBuffer pixBuffer;
 PixelBuffer textureBuffer;
 PixelBuffer skyBuffer;
 
 MaskBuffer mskBuffer;
-HalfPixelBuffer halfBuffer;
+CompressedPixelBuffer compressedBuffer;
 
 Renderer draw;
 
 PImage tex = null;
 PImage sky = null;
 
-final boolean usingHalf = true;
 final boolean grayscale = false;
-final boolean testing = true;
+final boolean testing = false;
 final boolean debug = true;
 
 final int w_width = 1280;
 final int w_height = 720;
-
-final boolean hq = true;
 
 int delta;
 int deltaTick, startTick, endTick;
 
 int rectX = 0, 
     rectY = 0;
+    
+final int COMP_FULL = 1;
+final int COMP_HALF = 2;
+final int COMP_QUARTER = 4;
+final int COMP_EIGHTH = 8;
+final int COMP_SIXTEENTH = 16;
 
 void settings()
 {
@@ -58,7 +61,7 @@ void setup()
     mskBuffer = new MaskBuffer(w_width, w_height);
     mskBuffer.makeNotMask();
 
-    halfBuffer = new HalfPixelBuffer(w_width, w_height);
+    compressedBuffer = new CompressedPixelBuffer(w_width, w_height, COMP_HALF);
 
     draw = new Renderer();
 
@@ -93,14 +96,14 @@ void draw()
     pixBuffer.stampRect(0, 0, w_width, w_height, color(255, 128, 255));
     pixBuffer.stampImage(0, 0, skyBuffer);
     pixBuffer.stampImage(rectX, rectY, textureBuffer);
+    compressedBuffer.MakeCompressedPixels(pixBuffer, mskBuffer);
 
     int cpu2 = millis();
     int gpu1 = millis();
 
-    //halfBuffer.MakeHalfPixels(pixBuffer, mskBuffer);
-    //draw.HalfFilterFirst(halfBuffer, mskBuffer, w_width, w_height);
-    //draw.HalfFilterLast(halfBuffer, mskBuffer, w_width, w_height);
-    draw.Raw(pixBuffer, w_width, w_height);
+    draw.CompressedFilterFirst(compressedBuffer, mskBuffer, w_width, w_height);
+    //draw.CompressedFilterLast(compressedBuffer, mskBuffer, w_width, w_height);
+    //draw.Raw(pixBuffer, w_width, w_height);
     //draw.FilterLast(pixBuffer, mskBuffer, w_width, w_height);
     //draw.Interlace(pixBuffer, w_width, w_height);
     
@@ -112,7 +115,7 @@ void draw()
         deltaTick = endTick - startTick;
         int cpu = cpu2 - cpu1;
         int gpu = gpu2 - gpu1;
-        println(deltaTick + "ms hq:" + hq + " half:" + usingHalf + " c:" + cpu + " g:" + gpu);
+        println(deltaTick + "ms c:" + cpu + " g:" + gpu);
     }
 
     if (testing)

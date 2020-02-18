@@ -159,24 +159,26 @@ class PixelBuffer extends Buffer
     }
 }
 
-class HalfPixelBuffer extends PixelBuffer
+class CompressedPixelBuffer extends PixelBuffer
 {
     int hw, hh;
-    HalfPixelBuffer(int _w, int _h)
+    int comp;
+    CompressedPixelBuffer(int _w, int _h, int c)
     {
-        super(_w / 2, _h / 2);
-        hw = _w / 2;
-        hh = _h / 2;
+        super(_w / c, _h / c);
+        comp = c;
+        hw = _w / c;
+        hh = _h / c;
     }
 
-    void MakeHalfPixels(Buffer p, Buffer m)
+    void MakeCompressedPixels(Buffer p, Buffer m)
     {
         for (int y = 0; y < p.h; y++) // Go through mask
             for (int x = 0; x < p.w; x++)
                 if (m.buffer[y][x] == 1) // If can see through mask
                     //int x_index = x / 2; // Transform mask index to pixel index
                     //int y_index = y / 2; // Transform mask index to pixel index
-                    this.buffer[y / 2][x / 2] = p.buffer[y][x];
+                    this.buffer[y / this.comp][x / this.comp] = p.buffer[y][x];
     }
 }
 
