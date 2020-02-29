@@ -80,12 +80,12 @@ class PixelBuffer extends Buffer
     {
         for (int y = 0; y < this.h; y++)
             for (int x = 0; x < this.w; x++)
-                {
-                    int valr = int(random(255));
-                    int valg = int(random(255));
-                    int valb = int(random(255));
-                    this.buffer[y][x] = color(valr, valg, valb);
-                }
+            {
+                int valr = int(random(255));
+                int valg = int(random(255));
+                int valb = int(random(255));
+                this.buffer[y][x] = color(valr, valg, valb);
+            }
     }
 
     void imageTex(PImage im, boolean isGray)
@@ -94,22 +94,21 @@ class PixelBuffer extends Buffer
         if (isGray)
             for (int y = 0; y < (this.h); y++) 
                 for (int x = 0; x < (this.w); x++)
-                    {
-                        int pixelIndex = Convert2dTo1d(x, y, w);
-                        int a = im.pixels[pixelIndex] >> 16 * 0 & 0xFF; // Extract alpha component
-                        int r = im.pixels[pixelIndex] >> 16 * 1 & 0xFF; // Extract red component
-                        int g = im.pixels[pixelIndex] >> 16 * 2 & 0xFF; // Extract green component
-                        int b = im.pixels[pixelIndex] >> 16 * 3 & 0xFF; // Extract blue component
-                        int average = int((r + g + b) / 3);
-                        this.buffer[y][x] = color(average);
-                    }
-        else
+                {
+                    int pixelIndex = Convert2dTo1d(x, y, w);
+                    int a = im.pixels[pixelIndex] >> 16 * 0 & 0xFF; // Extract alpha component
+                    int r = im.pixels[pixelIndex] >> 16 * 1 & 0xFF; // Extract red component
+                    int g = im.pixels[pixelIndex] >> 16 * 2 & 0xFF; // Extract green component
+                    int b = im.pixels[pixelIndex] >> 16 * 3 & 0xFF; // Extract blue component
+                    int average = int((r + g + b) / 3);
+                    this.buffer[y][x] = color(average);
+                } else
             for (int y = 0; y < (this.h); y++) 
                 for (int x = 0; x < (this.w); x++)
-                    {
-                        int pixelIndex = Convert2dTo1d(x, y, w);
-                        this.buffer[y][x] = im.pixels[pixelIndex];
-                    }
+                {
+                    int pixelIndex = Convert2dTo1d(x, y, w);
+                    this.buffer[y][x] = im.pixels[pixelIndex];
+                }
     }
 
     void stampRect(int rx, int ry, int rw, int rh, color c)
@@ -118,13 +117,13 @@ class PixelBuffer extends Buffer
         int yMin = ry, yMax = ry + rh;
         if (xMin < 0)
             xMin = 0;
-            // xMin is untouched, would be -1 + 4 for example
+        // xMin is untouched, would be -1 + 4 for example
         if (xMax > w_width)
             // xMin is untouched
             xMax = w_width;
         if (yMin < 0)
             yMin = 0;
-            // yMax is untouched, would be -2 + 5 for example
+        // yMax is untouched, would be -2 + 5 for example
         if (yMax > w_height)
             // yMin is untouched
             yMax = w_height;
@@ -139,23 +138,23 @@ class PixelBuffer extends Buffer
         int yMin = ry, yMax = ry + im.h;
         if (xMin < 0)
             xMin = 0;
-            // xMin is untouched, would be -1 + 4 for example
+        // xMin is untouched, would be -1 + 4 for example
         if (xMax > w_width)
             // xMin is untouched
             xMax = w_width;
         if (yMin < 0)
             yMin = 0;
-            // yMax is untouched, would be -2 + 5 for example
+        // yMax is untouched, would be -2 + 5 for example
         if (yMax > w_height)
             // yMin is untouched
             yMax = w_height;
         for (int y = yMin; y < yMax; y++)
             for (int x = xMin; x < xMax; x++)
-                {
-                    int im_x = x - rx;
-                    int im_y = y - ry;
-                    this.buffer[y][x] = im.buffer[im_y][im_x];
-                }
+            {
+                int im_x = x - rx;
+                int im_y = y - ry;
+                this.buffer[y][x] = im.buffer[im_y][im_x];
+            }
     }
 }
 

@@ -11,7 +11,7 @@ PImage tex = null;
 PImage sky = null;
 
 final boolean grayscale = false;
-final boolean testing = false;
+final boolean testing = true;
 final boolean debug = true;
 
 final int w_width = 1280;
@@ -22,12 +22,16 @@ int deltaTick, startTick, endTick;
 
 int rectX = 0, 
     rectY = 0;
-    
+
 final int COMP_FULL = 1;
 final int COMP_HALF = 2;
 final int COMP_QUARTER = 4;
 final int COMP_EIGHTH = 8;
 final int COMP_SIXTEENTH = 16;
+
+final int MAX_FRAME_TIME = 17; // The maxiumum time a time can take to draw, in this case 16.67
+final int MAX_CPU_TIME = 7; // The maximum time a cpu can operate
+final int GPU_THRESH = MAX_FRAME_TIME - MAX_CPU_TIME; // The maximum time the gpu can operate
 
 void settings()
 {
@@ -38,7 +42,7 @@ void settings()
 void setup()
 {   
     String[] urls = loadStrings("tests.txt"); // Gets list of image tests to perform
-    String url = urls[4]; // Gets link to test image
+    String url = urls[0]; // Gets link to test image
     String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
     tex = loadImage(url, type);
 
@@ -46,7 +50,7 @@ void setup()
 
     pixBuffer = new PixelBuffer(w_width, w_height);
 
-    textureBuffer = new PixelBuffer(400, 400);
+    textureBuffer = new PixelBuffer(200, 200);
     if (tex != null)
     {
         textureBuffer.imageTex(tex, grayscale);
@@ -75,20 +79,12 @@ void setup()
 
 void draw()
 {
-    
     int cpu1 = millis();
-    
+
     rectX = mouseX;
     rectY = mouseY;
 
-    if (debug)
-    {
-        startTick = millis();
-    }
-
-    noStroke();
-    clear();
-    background(0);
+    startTick = millis();
 
     skyBuffer.shift(1);
 
@@ -99,35 +95,26 @@ void draw()
     compressedBuffer.MakeCompressedPixels(pixBuffer, mskBuffer);
 
     int cpu2 = millis();
-    int gpu1 = millis();
 
-    draw.CompressedFilterFirst(compressedBuffer, mskBuffer, w_width, w_height);
-    //draw.CompressedFilterLast(compressedBuffer, mskBuffer, w_width, w_height);
-    //draw.Raw(pixBuffer, w_width, w_height);
-    //draw.FilterLast(pixBuffer, mskBuffer, w_width, w_height);
-    //draw.Interlace(pixBuffer, w_width, w_height);
-    
-    int gpu2 = millis();
-
-    if (debug)
+    int cpu = cpu2 - cpu1;
+    int gpu1, gpu2;
+    int gpu = 0;
+    //  vvvv Change this to enable 'lag frames'
+    if (true || cpu <= MAX_CPU_TIME)
     {
-        endTick = millis();
-        deltaTick = endTick - startTick;
-        int cpu = cpu2 - cpu1;
-        int gpu = gpu2 - gpu1;
-        println(deltaTick + "ms c:" + cpu + " g:" + gpu);
+        gpu1 = millis();
+        noStroke();
+        clear();
+        background(0);
+        SATURATE(compressedBuffer, 1.0f);
+        //draw.CompressedFilterFirst(compressedBuffer, mskBuffer, w_width, w_height);
+        draw.CompressedFilterLast(compressedBuffer, mskBuffer, w_width, w_height);
+        //draw.Raw(pixBuffer, w_width, w_height);
+        //draw.FilterLast(pixBuffer, mskBuffer, w_width, w_height);
+        //draw.Interlace(pixBuffer, w_width, w_height);
+        gpu2 = millis();
+        gpu = gpu2 - gpu1;
     }
 
-    if (testing)
-    {
-        println(frameRate, frameCount);
-        if (frameCount == w_width)
-        {
-            int start = delta;
-            int now = millis();
-            delta = now - start;
-            print(String.format("%s-%s = %s", now, start, delta));
-            stop();
-        }
-    }
+    println((cpu + gpu) + "ms c:" + cpu + " g:" + gpu + " fr:" + frameRate);
 }
