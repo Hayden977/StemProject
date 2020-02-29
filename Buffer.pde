@@ -75,6 +75,18 @@ class PixelBuffer extends Buffer
             for (int x = 0; x < (this.w); x++)
                 this.buffer[y][x] = color(r, g, b);
     }
+    
+    void mappedTex()
+    {
+        for (int y = 0; y < this.h; y++)
+            for (int x = 0; x < this.w; x++)
+            {
+                float r = map(y, 0, this.h, 0, 255);
+                float g = map(x, 0, this.w, 0, 255);
+                float b = map(Buffer.Convert2dTo1d(x, y, this.w), 0, this.w * this.h, 0, 255);
+                this.buffer[y][x] = color(r, g, b);
+            }
+    }
 
     void randomTex()
     {

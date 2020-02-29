@@ -1,4 +1,5 @@
 PixelBuffer pixBuffer;
+PixelBuffer mapBuffer;
 PixelBuffer textureBuffer;
 PixelBuffer skyBuffer;
 
@@ -30,7 +31,7 @@ final int COMP_EIGHTH = 8;
 final int COMP_SIXTEENTH = 16;
 
 final int MAX_FRAME_TIME = 17; // The maxiumum time a time can take to draw, in this case 16.67
-final int MAX_CPU_TIME = 7; // The maximum time a cpu can operate
+final int MAX_CPU_TIME = 8; // The maximum time a cpu can operate
 final int GPU_THRESH = MAX_FRAME_TIME - MAX_CPU_TIME; // The maximum time the gpu can operate
 
 void settings()
@@ -49,12 +50,16 @@ void setup()
     sky = loadImage("https://i.vimeocdn.com/video/439972201_1280x720.jpg", "jpg");
 
     pixBuffer = new PixelBuffer(w_width, w_height);
+    
+    mapBuffer = new PixelBuffer(w_width, w_height);
+    mapBuffer.mappedTex();
 
     textureBuffer = new PixelBuffer(200, 200);
     if (tex != null)
     {
         textureBuffer.imageTex(tex, grayscale);
     }
+    textureBuffer.mappedTex();
 
     skyBuffer = new PixelBuffer(w_width, w_height);
     if (sky != null)
@@ -65,7 +70,7 @@ void setup()
     mskBuffer = new MaskBuffer(w_width, w_height);
     mskBuffer.makeNotMask();
 
-    compressedBuffer = new CompressedPixelBuffer(w_width, w_height, COMP_HALF);
+    compressedBuffer = new CompressedPixelBuffer(w_width, w_height, COMP_QUARTER);
 
     draw = new Renderer();
 
@@ -90,9 +95,11 @@ void draw()
 
     pixBuffer.flush();
     pixBuffer.stampRect(0, 0, w_width, w_height, color(255, 128, 255));
+    pixBuffer.stampImage(0, 0, mapBuffer);
     pixBuffer.stampImage(0, 0, skyBuffer);
     pixBuffer.stampImage(rectX, rectY, textureBuffer);
     compressedBuffer.MakeCompressedPixels(pixBuffer, mskBuffer);
+    SATURATE(compressedBuffer, 5.0f);
 
     int cpu2 = millis();
 
@@ -106,9 +113,8 @@ void draw()
         noStroke();
         clear();
         background(0);
-        SATURATE(compressedBuffer, 1.0f);
-        //draw.CompressedFilterFirst(compressedBuffer, mskBuffer, w_width, w_height);
-        draw.CompressedFilterLast(compressedBuffer, mskBuffer, w_width, w_height);
+        draw.CompressedFilterFirst(compressedBuffer, mskBuffer, w_width, w_height);
+        //draw.CompressedFilterLast(compressedBuffer, mskBuffer, w_width, w_height);
         //draw.Raw(pixBuffer, w_width, w_height);
         //draw.FilterLast(pixBuffer, mskBuffer, w_width, w_height);
         //draw.Interlace(pixBuffer, w_width, w_height);
@@ -116,5 +122,5 @@ void draw()
         gpu = gpu2 - gpu1;
     }
 
-    println((cpu + gpu) + "ms c:" + cpu + " g:" + gpu + " fr:" + frameRate);
+    println((cpu + gpu) + "ms c:" + cpu + " (" + MAX_CPU_TIME + ") g:" + gpu + " (" + GPU_THRESH + ") fr:" + frameRate);
 }
