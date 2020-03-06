@@ -143,11 +143,16 @@ class PixelBuffer extends Buffer
             for (int x = xMin; x < xMax; x++)
                 this.buffer[y][x] = c;
     }
-
+    
     void stampImage(int rx, int ry, PixelBuffer im)
     {
-        int xMin = rx, xMax = rx + im.w;
-        int yMin = ry, yMax = ry + im.h;
+        stampImage(rx, ry, im, im.w, im.h);
+    }
+
+    void stampImage(int rx, int ry, PixelBuffer im, int cx, int cy)
+    {
+        int xMin = rx, xMax = rx + cx;
+        int yMin = ry, yMax = ry + cy;
         if (xMin < 0)
             xMin = 0;
         // xMin is untouched, would be -1 + 4 for example
@@ -163,8 +168,8 @@ class PixelBuffer extends Buffer
         for (int y = yMin; y < yMax; y++)
             for (int x = xMin; x < xMax; x++)
             {
-                int im_x = x - rx;
-                int im_y = y - ry;
+                int im_x = x - (rx);
+                int im_y = y - (ry);
                 this.buffer[y][x] = im.buffer[im_y][im_x];
             }
     }

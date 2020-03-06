@@ -59,7 +59,6 @@ void setup()
     {
         textureBuffer.imageTex(tex, grayscale);
     }
-    textureBuffer.mappedTex();
 
     skyBuffer = new PixelBuffer(w_width, w_height);
     if (sky != null)
@@ -70,7 +69,7 @@ void setup()
     mskBuffer = new MaskBuffer(w_width, w_height);
     mskBuffer.makeNotMask();
 
-    compressedBuffer = new CompressedPixelBuffer(w_width, w_height, COMP_QUARTER);
+    compressedBuffer = new CompressedPixelBuffer(w_width, w_height, COMP_HALF);
 
     draw = new Renderer();
 
@@ -99,7 +98,7 @@ void draw()
     pixBuffer.stampImage(0, 0, skyBuffer);
     pixBuffer.stampImage(rectX, rectY, textureBuffer);
     compressedBuffer.MakeCompressedPixels(pixBuffer, mskBuffer);
-    SATURATE(compressedBuffer, 5.0f);
+    SATURATE(compressedBuffer, 1.5f);
 
     int cpu2 = millis();
 
