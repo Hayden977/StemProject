@@ -24,14 +24,10 @@ int deltaTick, startTick, endTick;
 int rectX = 0, 
     rectY = 0;
 
-final int COMP_FULL = 1;
-final int COMP_HALF = 2;
-final int COMP_QUARTER = 4;
-final int COMP_EIGHTH = 8;
-final int COMP_SIXTEENTH = 16;
+final int COMP_FACTORS[] = {1, 2, 4, 5, 8, 10, 16, 20, 40, 80};
 
 final int MAX_FRAME_TIME = 17; // The maxiumum time a time can take to draw, in this case 16.67
-final int MAX_CPU_TIME = 8; // The maximum time a cpu can operate
+final int MAX_CPU_TIME = 14; // The maximum time a cpu can operate, went from 8 to FOURTEEN
 final int GPU_THRESH = MAX_FRAME_TIME - MAX_CPU_TIME; // The maximum time the gpu can operate
 
 void settings()
@@ -50,7 +46,7 @@ void setup()
     sky = loadImage("https://i.vimeocdn.com/video/439972201_1280x720.jpg", "jpg");
 
     pixBuffer = new PixelBuffer(w_width, w_height);
-    
+
     mapBuffer = new PixelBuffer(w_width, w_height);
     mapBuffer.mappedTex();
 
@@ -69,7 +65,7 @@ void setup()
     mskBuffer = new MaskBuffer(w_width, w_height);
     mskBuffer.makeNotMask();
 
-    compressedBuffer = new CompressedPixelBuffer(w_width, w_height, COMP_HALF);
+    compressedBuffer = new CompressedPixelBuffer(w_width, w_height, COMP_FACTORS[1]);
 
     draw = new Renderer();
 
@@ -98,7 +94,7 @@ void draw()
     pixBuffer.stampImage(0, 0, skyBuffer);
     pixBuffer.stampImage(rectX, rectY, textureBuffer);
     compressedBuffer.MakeCompressedPixels(pixBuffer, mskBuffer);
-    SATURATE(compressedBuffer, 1.5f);
+    //SATURATE(compressedBuffer, 1.5f);
 
     int cpu2 = millis();
 

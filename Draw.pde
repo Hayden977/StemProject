@@ -5,30 +5,30 @@ class Renderer //<>// //<>//
         println("Initialized Renderer" + this.toString());
     }
 
-    void Raw(Buffer p, int w, int h)
+    void Raw(PixelBuffer p, int w, int h)
     {
         for (int y = 0; y < h; y++) 
             for (int x = 0; x < w; x++)
                 set(x, y, p.buffer[y][x]);
     }
 
-    void FilterLast(Buffer p, Buffer m, int w, int h) 
+    void FilterLast(PixelBuffer p, MaskBuffer m, int w, int h) 
     {
         for (int y = 0; y < h; y++) 
             for (int x = 0; x < w; x++)
-                if (m.buffer[y][x] == 1) 
+                if (m.buffer[y][x] != m.transparent) 
                     set(x, y, p.buffer[y][x]);
     }
 
-    void FilterFirst(Buffer p, Buffer m, int w, int h)
+    void FilterFirst(PixelBuffer p, MaskBuffer m, int w, int h)
     {
         for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++)
-                if (m.buffer[y][x] == 1)
+                if (m.buffer[y][x] != m.transparent)
                     set(x, y, p.buffer[y][x]);
     }
 
-    void Interlace(Buffer p, int w, int h)
+    void Interlace(PixelBuffer p, int w, int h)
     {
         if (frameCount % 2 == 0) // Check if on even frame
             for (int y = 0; y < h / 2; y++)
@@ -40,23 +40,19 @@ class Renderer //<>// //<>//
                 set(x, y * 2 + 1, p.buffer[y * 2 + 1][x]);
     }
 
-    void CompressedFilterLast(CompressedPixelBuffer cp, Buffer m, int w, int h)
+    void CompressedFilterLast(CompressedPixelBuffer cp, MaskBuffer m, int w, int h)
     {
         for (int y = 0; y < h / cp.comp; y++)
             for (int x = 0; x < w / cp.comp; x++)
-                // int x_i = x * 2;
-                // int y_i = y * 2;
-                if (m.buffer[y * cp.comp][x * cp.comp] == 1)
+                if (m.buffer[y * cp.comp][x * cp.comp] != m.transparent)
                     set(x * cp.comp, y * cp.comp, cp.buffer[y][x]);
     }
 
-    void CompressedFilterFirst(CompressedPixelBuffer cp, Buffer m, int w, int h)
+    void CompressedFilterFirst(CompressedPixelBuffer cp, MaskBuffer m, int w, int h)
     {
         for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++)
-                if (m.buffer[y][x] == 1)
-                    // int x_hpindex = x / 2;
-                    // int y_hpindex = y / 2;
+                if (m.buffer[y][x] != m.transparent)
                     set(x, y, cp.buffer[y / cp.comp][x / cp.comp]);
     }
 }

@@ -64,6 +64,7 @@ static class Buffer
 class PixelBuffer extends Buffer
 {
     color err = color(255, 128, 255);
+    color transparent = color(128, 255, 255);
     PixelBuffer(int _w, int _h)
     {
         super(_w, _h);
@@ -75,7 +76,7 @@ class PixelBuffer extends Buffer
             for (int x = 0; x < (this.w); x++)
                 this.buffer[y][x] = color(r, g, b);
     }
-    
+
     void mappedTex()
     {
         for (int y = 0; y < this.h; y++)
@@ -127,23 +128,15 @@ class PixelBuffer extends Buffer
     {
         int xMin = rx, xMax = rx + rw;
         int yMin = ry, yMax = ry + rh;
-        if (xMin < 0)
-            xMin = 0;
-        // xMin is untouched, would be -1 + 4 for example
-        if (xMax > w_width)
-            // xMin is untouched
-            xMax = w_width;
-        if (yMin < 0)
-            yMin = 0;
-        // yMax is untouched, would be -2 + 5 for example
-        if (yMax > w_height)
-            // yMin is untouched
-            yMax = w_height;
+        if (xMin < 0) xMin = 0;
+        if (xMax > w_width) xMax = w_width;
+        if (yMin < 0) yMin = 0;
+        if (yMax > w_height) yMax = w_height;
         for (int y = yMin; y < yMax; y++)
             for (int x = xMin; x < xMax; x++)
                 this.buffer[y][x] = c;
     }
-    
+
     void stampImage(int rx, int ry, PixelBuffer im)
     {
         stampImage(rx, ry, im, im.w, im.h);
@@ -153,18 +146,10 @@ class PixelBuffer extends Buffer
     {
         int xMin = rx, xMax = rx + cx;
         int yMin = ry, yMax = ry + cy;
-        if (xMin < 0)
-            xMin = 0;
-        // xMin is untouched, would be -1 + 4 for example
-        if (xMax > w_width)
-            // xMin is untouched
-            xMax = w_width;
-        if (yMin < 0)
-            yMin = 0;
-        // yMax is untouched, would be -2 + 5 for example
-        if (yMax > w_height)
-            // yMin is untouched
-            yMax = w_height;
+        if (xMin < 0) xMin = 0;
+        if (xMax > w_width) xMax = w_width;
+        if (yMin < 0) yMin = 0;
+        if (yMax > w_height) yMax = w_height;
         for (int y = yMin; y < yMax; y++)
             for (int x = xMin; x < xMax; x++)
             {
@@ -191,14 +176,14 @@ class CompressedPixelBuffer extends PixelBuffer
     {
         for (int y = 0; y < p.h; y++) // Go through mask
             for (int x = 0; x < p.w; x++)
-                if (m.buffer[y][x] == 1) // If can see through mask
+                if (m.buffer[y][x] != this.transparent) // If can see through mask
                     //int x_index = x / 2; // Transform mask index to pixel index
                     //int y_index = y / 2; // Transform mask index to pixel index
                     this.buffer[y / this.comp][x / this.comp] = p.buffer[y][x];
     }
 }
 
-class MaskBuffer extends Buffer
+class MaskBuffer extends PixelBuffer
 {
     MaskBuffer(int _w, int _h)
     {
@@ -210,10 +195,13 @@ class MaskBuffer extends Buffer
         for (int y = 0; y < this.h; y++) // y, height, row, etc. 
             for (int x = 0; x < this.w; x++) // x, width, column, etc.
                 if (y % 2 == 1) // Odd row
-                    // int val = x % 2; // 0, 1, 0, 1, ...
-                    this.buffer[y][x] = x % 2;
-                else if (y % 2 == 0) // Even row
-                    //int val = -(x % 2) + 1; // 1, 0, 1, 0, ...
-                    this.buffer[y][x] = -(x % 2) + 1;
+                {
+                    int val = x % 2; // 0, 1, 0, 1, ...
+                    this.buffer[y][x] = val == 0 ? this.transparent : color(0, 0, 0);
+                } else if (y % 2 == 0) // Even row
+                {
+                    int val = -(x % 2) + 1; // 1, 0, 1, 0, ...
+                    this.buffer[y][x] = val == 0 ? this.transparent : color(0, 0, 0);
+                }
     }
 }
