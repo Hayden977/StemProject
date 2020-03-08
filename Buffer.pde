@@ -79,24 +79,26 @@ class PixelBuffer extends Buffer
 
     void mappedTex()
     {
+        float r, g, b;
         for (int y = 0; y < this.h; y++)
             for (int x = 0; x < this.w; x++)
             {
-                float r = map(y, 0, this.h, 0, 255);
-                float g = map(x, 0, this.w, 0, 255);
-                float b = map(Buffer.Convert2dTo1d(x, y, this.w), 0, this.w * this.h, 0, 255);
+                r = map(y, 0, this.h, 0, 255);
+                g = map(x, 0, this.w, 0, 255);
+                b = map(Buffer.Convert2dTo1d(x, y, this.w), 0, this.w * this.h, 0, 255);
                 this.buffer[y][x] = color(r, g, b);
             }
     }
 
     void randomTex()
     {
+        int valr, valg, valb;
         for (int y = 0; y < this.h; y++)
             for (int x = 0; x < this.w; x++)
             {
-                int valr = int(random(255));
-                int valg = int(random(255));
-                int valb = int(random(255));
+                valr = int(random(255));
+                valg = int(random(255));
+                valb = int(random(255));
                 this.buffer[y][x] = color(valr, valg, valb);
             }
     }
@@ -108,14 +110,16 @@ class PixelBuffer extends Buffer
             for (int y = 0; y < (this.h); y++) 
                 for (int x = 0; x < (this.w); x++)
                 {
-                    int pixelIndex = Convert2dTo1d(x, y, w);
-                    int a = im.pixels[pixelIndex] >> 16 * 0 & 0xFF; // Extract alpha component
-                    int r = im.pixels[pixelIndex] >> 16 * 1 & 0xFF; // Extract red component
-                    int g = im.pixels[pixelIndex] >> 16 * 2 & 0xFF; // Extract green component
-                    int b = im.pixels[pixelIndex] >> 16 * 3 & 0xFF; // Extract blue component
-                    int average = int((r + g + b) / 3);
+                    int pixelIndex, a, r, g, b, average;
+                    pixelIndex = Convert2dTo1d(x, y, w);
+                    a = im.pixels[pixelIndex] >> 16 * 0 & 0xFF; // Extract alpha component
+                    r = im.pixels[pixelIndex] >> 16 * 1 & 0xFF; // Extract red component
+                    g = im.pixels[pixelIndex] >> 16 * 2 & 0xFF; // Extract green component
+                    b = im.pixels[pixelIndex] >> 16 * 3 & 0xFF; // Extract blue component
+                    average = int((r + g + b) / 3);
                     this.buffer[y][x] = color(average);
-                } else
+                } 
+            else
             for (int y = 0; y < (this.h); y++) 
                 for (int x = 0; x < (this.w); x++)
                 {
@@ -192,15 +196,16 @@ class MaskBuffer extends PixelBuffer
 
     void makeNotMask()
     {
+        int val;
         for (int y = 0; y < this.h; y++) // y, height, row, etc. 
             for (int x = 0; x < this.w; x++) // x, width, column, etc.
                 if (y % 2 == 1) // Odd row
                 {
-                    int val = x % 2; // 0, 1, 0, 1, ...
+                    val = x % 2; // 0, 1, 0, 1, ...
                     this.buffer[y][x] = val == 0 ? this.transparent : color(0, 0, 0);
                 } else if (y % 2 == 0) // Even row
                 {
-                    int val = -(x % 2) + 1; // 1, 0, 1, 0, ...
+                    val = -(x % 2) + 1; // 1, 0, 1, 0, ...
                     this.buffer[y][x] = val == 0 ? this.transparent : color(0, 0, 0);
                 }
     }

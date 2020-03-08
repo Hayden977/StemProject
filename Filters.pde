@@ -45,3 +45,27 @@ void SATURATE(PixelBuffer pb, float sc)
 {
     SATURATE(pb, sc, sc, sc);
 }
+
+void NN(PixelBuffer pb, int rx, int ry)
+{
+    // http://tech-algorithm.com/articles/nearest-neighbor-image-scaling/
+    float x_scale = pb.w / float(rx);
+    float y_scale = pb.h / float(ry);
+    PixelBuffer temp = new PixelBuffer(rx, ry);
+    int px, py;
+    for (int y = 0; y < ry; y++)
+        for (int x = 0; x < rx; x++)
+        {
+            py = floor(y * y_scale);
+            px = floor(x * x_scale);
+            temp.buffer[y][x] = pb.buffer[py][px];
+        }
+    pb.w = rx;
+    pb.h = ry;
+    pb.buffer = temp.buffer;
+}
+
+void NN(PixelBuffer pb, float s)
+{
+    NN(pb, int(pb.w * s), int(pb.h * s));
+}
