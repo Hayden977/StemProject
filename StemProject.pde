@@ -12,14 +12,9 @@ PImage tex = null;
 PImage sky = null;
 
 final boolean grayscale = false;
-final boolean testing = true;
-final boolean debug = true;
 
 final int w_width = 1280;
 final int w_height = 720;
-
-int delta;
-int deltaTick, startTick, endTick;
 
 int rectX = 0, 
     rectY = 0;
@@ -54,13 +49,14 @@ void setup()
     if (tex != null)
     {
         textureBuffer.imageTex(tex, grayscale);
-        //NN(textureBuffer, 1.0);
+        tex = null;
     }
 
     skyBuffer = new PixelBuffer(w_width, w_height);
     if (sky != null)
     {
         skyBuffer.imageTex(sky, grayscale);
+        sky = null;
     }
 
     mskBuffer = new MaskBuffer(w_width, w_height);
@@ -71,11 +67,6 @@ void setup()
     draw = new Renderer();
 
     frameRate(1000);
-
-    if (testing)
-    {
-        delta = millis();
-    }
 }
 
 void draw()
@@ -84,8 +75,6 @@ void draw()
 
     rectX = mouseX;
     rectY = mouseY;
-
-    startTick = millis();
 
     skyBuffer.shift(1);
 
@@ -106,7 +95,6 @@ void draw()
     if (true || cpu <= MAX_CPU_TIME)
     {
         gpu1 = millis();
-        noStroke();
         clear();
         background(0);
         draw.CompressedFilterFirst(compressedBuffer, mskBuffer, w_width, w_height);

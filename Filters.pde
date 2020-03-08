@@ -69,3 +69,48 @@ void NN(PixelBuffer pb, float s)
 {
     NN(pb, int(pb.w * s), int(pb.h * s));
 }
+
+void ROTATE90(PixelBuffer pb)
+{
+    PixelBuffer temp = new PixelBuffer(pb.w, pb.h);
+    for (int y = 0; y < pb.h; y++)
+        for (int x = 0; x < pb.w; x++)
+            temp.buffer[y][x] = pb.buffer[(pb.w - 1) - x][y];
+    pb.buffer = temp.buffer;
+}
+
+void ROTATE180(PixelBuffer pb)
+{
+    PixelBuffer temp = new PixelBuffer(pb.w, pb.h);
+    for (int y = 0; y < pb.h; y++)
+        for (int x = 0; x < pb.w; x++)
+            temp.buffer[y][x] = pb.buffer[(pb.h - 1) - y][(pb.w - 1) - x];
+    pb.buffer = temp.buffer;
+}
+
+void ROTATE270(PixelBuffer pb)
+{
+    PixelBuffer temp = new PixelBuffer(pb.w, pb.h);
+    for (int y = 0; y < pb.h; y++)
+        for (int x = 0; x < pb.w; x++)
+            temp.buffer[y][x] = pb.buffer[x][(pb.w - 1) - y];
+    pb.buffer = temp.buffer;
+}
+
+void FLIPHORIZ(PixelBuffer pb)
+{
+    PixelBuffer temp = new PixelBuffer(pb.w, pb.h);
+    for (int y = 0; y < pb.h; y++)
+        for (int x = 0; x < pb.w; x++)
+            temp.buffer[y][x] = pb.buffer[y][(pb.w - 1) - x];
+    pb.buffer = temp.buffer;
+}
+
+void FLIPVERT(PixelBuffer pb)
+{
+    PixelBuffer temp = new PixelBuffer(pb.w, pb.h);
+    for (int y = 0; y < pb.h; y++)
+        for (int x = 0; x < pb.w; x++)
+            temp.buffer[y][x] = pb.buffer[(pb.h - 1) - y][x];
+    pb.buffer = temp.buffer;
+}
