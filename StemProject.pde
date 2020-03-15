@@ -14,8 +14,8 @@ PImage sky1080 = null;
 
 final boolean grayscale = false;
 
-final int w_width = 1920;
-final int w_height = 1080;
+final int w_width = 1280;
+final int w_height = 720;
 
 int rectX = 0, 
     rectY = 0;
@@ -43,8 +43,8 @@ void setup()
     String type = url.substring(url.length() - 3); // https://stackoverflow.com/a/15253508
     tex = loadImage(url, type);
 
-    //sky720 = loadImage("https://i.vimeocdn.com/video/439972201_1280x720.jpg", "jpg")
-    sky1080 = loadImage("https://images.wallpaperscraft.com/image/space_planet_light_galaxy_94490_1920x1080.jpg", "jpg");
+    sky720 = loadImage("https://i.vimeocdn.com/video/439972201_1280x720.jpg", "jpg");
+    //sky1080 = loadImage("https://images.wallpaperscraft.com/image/space_planet_light_galaxy_94490_1920x1080.jpg", "jpg");
 
     pixBuffer = new PixelBuffer(w_width, w_height);
 
@@ -59,16 +59,16 @@ void setup()
     }
 
     skyBuffer = new PixelBuffer(w_width, w_height);
-    //if (sky720 != null)
-    //{
-        //skyBuffer.imageTex(sky720, grayscale);
-        //sky720 = null;
-    //}
-    if (sky1080 != null)
+    if (sky720 != null)
     {
-        skyBuffer.imageTex(sky1080, grayscale);
-        sky1080 = null;
+        skyBuffer.imageTex(sky720, grayscale);
+        sky720 = null;
     }
+    //if (sky1080 != null)
+    //{
+    //    skyBuffer.imageTex(sky1080, grayscale);
+    //    sky1080 = null;
+    //}
 
     mskBuffer = new MaskBuffer(w_width, w_height);
     mskBuffer.makeNotMask();
@@ -95,7 +95,7 @@ void draw()
     pixBuffer.stampImage(0, 0, skyBuffer);
     pixBuffer.stampImage(rectX, rectY, textureBuffer);
     compressedBuffer.MakeCompressedPixels(pixBuffer, mskBuffer);
-    //SATURATE(compressedBuffer, 1.25f);
+    //INVERT(compressedBuffer);
 
     cpu2 = millis();
 

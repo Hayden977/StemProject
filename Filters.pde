@@ -46,6 +46,19 @@ void SATURATE(PixelBuffer pb, float sc)
     SATURATE(pb, sc, sc, sc);
 }
 
+void INVERT(PixelBuffer pb)
+{
+    for (int y = 0; y < pb.h; y++) 
+        for (int x = 0; x < pb.w; x++)
+        {
+            int r = 255 - int(red(pb.buffer[y][x])); // Extract red component
+            int g = 255 - int(green(pb.buffer[y][x])); // Extract green component
+            int b = 255 - int(blue(pb.buffer[y][x])); // Extract blue component
+            pb.buffer[y][x] = color(r, g, b);
+        }
+            
+}
+
 void NN(PixelBuffer pb, int rx, int ry)
 {
     // http://tech-algorithm.com/articles/nearest-neighbor-image-scaling/
